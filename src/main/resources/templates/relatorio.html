@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+>
+<head>
+  <meta charset="UTF-8">
+  <title>Home</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+          integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+          crossorigin="anonymous"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+</head>
+<body>
+
+<div class="container-md text-left" style=" width: 100%">
+    <h2 class="card-title">Movimentações por Cliente e tipo de Movimentação </h2>
+</div>
+<div class="container-md text-left border border-dark" id="myGrid" name="myGrid" style="width: 100%">
+
+    <div class="row">
+        <div class="col-sm border border-dark">
+            Cliente
+        </div>
+        <div class="col-sm border border-dark">
+            Tipo Movimentação
+        </div>
+        <div class="col-sm border border-dark">
+            Quantidade
+        </div>
+    </div>
+</div>
+
+<div class="container-md text-left" style=" width: 100%">
+    <h2 class="card-title">Movimentações por Cliente e tipo de Movimentação da categoria Importação </h2>
+</div>
+<div class="container-md text-left border border-dark" id="myGrid2" name="myGrid2" style="width: 100%">
+
+    <div class="row">
+        <div class="col-sm border border-dark">
+            Cliente
+        </div>
+        <div class="col-sm border border-dark">
+            Tipo Movimentação
+        </div>
+        <div class="col-sm border border-dark">
+            Quantidade
+        </div>
+    </div>
+</div>
+
+<div class="container-md text-left" style=" width: 100%">
+    <h2 class="card-title">Movimentações por Cliente e tipo de Movimentação da categoria Exportação </h2>
+</div>
+<div class="container-md text-left border border-dark" id="myGrid3" name="myGrid3" style="width: 100%">
+
+    <div class="row">
+        <div class="col-sm border border-dark">
+            Cliente
+        </div>
+        <div class="col-sm border border-dark">
+            Tipo Movimentação
+        </div>
+        <div class="col-sm border border-dark">
+            Quantidade
+        </div>
+    </div>
+</div>
+<div class="align-content-center">
+  <a href="../../index">
+    Voltar para o inicio
+  </a>
+</div>
+<script>
+
+$(window).ready(getRelatorios);
+
+let grid = $("#myGrid");
+let grid2 = $("#myGrid2");
+let grid3 = $("#myGrid3");
+
+function getRelatorios() {
+    let baseUrlLocal = `${window.location.origin}`;
+    let url = baseUrlLocal + "/movimentacao/MovimentacaoPorCliente";
+    let url2 = baseUrlLocal + "/movimentacao/MovimentacaoPorClienteImportacao";
+    let url3 = baseUrlLocal + "/movimentacao/MovimentacaoPorClienteExportacao";
+
+    let method = "GET"
+
+    $.ajax({
+        type: method,
+        url: url,
+        dataType: "JSON",
+
+        success: function (data, textStatus, xhr) {
+
+            if (data.length > 0) {
+
+                RelatorioList = data;
+
+                for (let i = 0; i < RelatorioList.length; i++) {
+                    gridRelatorioList(RelatorioList[i],grid);
+                }
+
+            }
+        }
+    });
+
+    $.ajax({
+        type: method,
+        url: url2,
+        dataType: "JSON",
+
+        success: function (data, textStatus, xhr) {
+
+            if (data.length > 0) {
+
+                RelatorioList = data;
+
+                for (let i = 0; i < RelatorioList.length; i++) {
+                    gridRelatorioList(RelatorioList[i],grid2);
+                }
+
+            }
+        }
+    });
+    $.ajax({
+        type: method,
+        url: url3,
+        dataType: "JSON",
+
+        success: function (data, textStatus, xhr) {
+
+            if (data.length > 0) {
+
+                RelatorioList = data;
+
+                for (let i = 0; i < RelatorioList.length; i++) {
+                    gridRelatorioList(RelatorioList[i],grid3);
+                }
+
+            }
+        }
+    });
+
+}
+
+function gridRelatorioList(relatorio, grid) {
+
+
+    grid.append('<div class="row">\n' +
+        '        <div class="col-sm border border-dark" >\n' +
+        relatorio.cliente +
+        '        </div>\n' +
+        '        <div class="col-sm border border-dark">\n' +
+        relatorio.tipoMovimentacao +
+        '        </div>\n' +
+        '        <div class="col-sm border border-dark">\n' +
+        relatorio.totalMovimentacao +
+        '        </div>\n' +
+        '    </div>');
+
+}
+
+function excluir(conteiner) {
+    let baseUrlLocal = `${window.location.origin}`;
+    let url = baseUrlLocal + "/conteiner/" + conteiner;
+    let method = "Delete"
+
+    $.ajax({
+        type: method,
+        url: url,
+        dataType: "JSON",
+
+        success: function (data, textStatus, xhr) {
+             if (data.status === "success") {
+                error.css("display", "none");
+                location.reload(true);
+             } else if (data.status === "invalid") {
+                error.text("Conteiner já possui movimentações e não pode ser excluído");
+                error.css("display", "block");
+             }
+
+
+        }
+    });
+}
+
+</script>
+
+</body>
+</html>

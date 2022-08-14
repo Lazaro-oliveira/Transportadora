@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns="http://www.w3.org/1999/xhtml"
+>
+<head>
+    <meta charset="UTF-8">
+    <title>Home</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+            integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+            crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+</head>
+<body>
+
+
+<div class="container-md text-left border border-dark" style="width: 700px">
+    <div class="container-md text-left" style=" width: 100%">
+        <h4 class="card-title">Criar</h4>
+    </div>
+    <div class="container-md" style=" width: 100%">
+        <h2 class="card-title">Conteiner</h2>
+    </div>
+
+    <div class="container-md" style="width: 100%">
+        <form id="formRegister" name="formRegister">
+            <div class="alert alert-danger" role="alert" id="errorMessage" name="errorMessage" style="display: none">
+            </div>
+            <div class="alert" role="alert" id="msg" name="msg" style="display: none; color: red">
+                Criado com sucesso
+            </div>
+            <div class="row">
+                <div class="mb-3 row">
+                    <label for="cliente">Cliente</label>
+                    <div>
+                        <input type="text" class="form-control" id="cliente" name="cliente">
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="numeroConteiner">Numero Conteiner</label>
+                    <div>
+                        <input type="text" class="form-control" id="numeroConteiner" name="numeroConteiner">
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="tipo">Tipo:</label>
+                    <div>
+                        <select id="tipo" name="tipo">
+                            <option selected value='20'>20</option>
+                            <option value='40'>40</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="status">Status:</label>
+                    <div>
+                        <select id="status" name="status">
+                            <option selected value='Cheio'>Cheio</option>
+                            <option value='Vazio'>Vazio</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="categoria">Categoria:</label>
+                    <div>
+                        <select id="categoria" name="categoria">
+                            <option selected value='Importação'>Importação</option>
+                            <option value='Exportação'>Exportação</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="align-content-center">
+                <button type="button" class="btn btn-primary" name="save" id="save" onclick="create()">
+                    Criar
+                </button>
+            </div>
+            <div class="align-content-center">
+                <a href="../../index">
+                    Voltar para o inicio
+                </a>
+            </div>
+        </form>
+    </div>
+</div>
+<script>
+    let baseUrlLocal = `${window.location.origin}/${window.location.pathname.split("/")[1]}`;
+    let error = $("#errorMessage");
+    let success = $("#msg");
+
+
+    function create() {
+            const regExp = /^[a-z]{4}[0-9]{7}/ ;
+            let numeroConteiner = $('#numeroConteiner').val()
+
+            let cliente = document.getElementById('cliente').value
+
+        if(cliente.length >= 1){
+
+            if(numeroConteiner.length == 11 && regExp.test(numeroConteiner)){
+
+                let url = baseUrlLocal;
+                let data = JSON.stringify( { "cliente": $('#cliente').val(), "numeroConteiner": $('#numeroConteiner').val(), "tipo": $('#tipo').val(), "status": $('#status').val(), "categoria": $('#categoria').val() } );
+                let method = "POST";
+                console.log(data);
+
+                $.ajax({
+                    type: method,
+                    url: url,
+                    dataType: "JSON",
+                    contentType: 'application/json',
+                    data: data,
+
+                    success: function (data) {
+
+                        console.log(data);
+                        if (data.status === "success") {
+                            error.text("");
+                            error.css("display", "none");
+                            success.css("display", "block");
+                        } else if (data.status === "invalid") {
+                            error.text("Número de conteiner já cadastrado");
+                            error.css("display", "block");
+                            success.css("display", "none");
+                        }
+                    }
+                });
+            }
+            else{
+                error.text("Número de conteiner deve possuir 4 letras e 7 números. Ex: TEST1234567) ");
+                error.css("display", "block");
+            }
+        }
+        else{
+            error.text("Campo cliente obrigatorio");
+            error.css("display", "block");
+        }
+   }
+
+
+</script>
+</body>
+</html>
